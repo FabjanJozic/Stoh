@@ -4,8 +4,9 @@ import matplotlib.ticker as tick
 
 N_max, k = 1e7, 5
 x = []
-    
-with open('dev_val.txt', 'w') as wr:
+
+#ovaj blok koda stvara datoteku s vrijednostima
+'''with open('dev_val.txt', 'w') as wr:
     for i in range(1, int(N_max)+1):
         x.append(np.random.rand()) #generira random vrijednosti u rasponu [0,1]
         if i%10000 == 0: #korak za 10000 u N
@@ -15,8 +16,9 @@ with open('dev_val.txt', 'w') as wr:
             dev = abs(Ck-0.25)*np.sqrt(i) #racunanje devijacije
             lin = f"{i}\t{dev}\n"
             wr.write(lin)
-    wr.close()
-    
+    wr.close()'''
+
+#ovaj blok koda cita vrijednosti iz datoteke    
 with open('dev_val.txt', 'r') as re:
     R = re.readlines()
     X, Y = [], [] #N i dev liste
