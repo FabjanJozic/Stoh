@@ -15,7 +15,7 @@ dif1, dif2 = np.zeros(Nx+1), np.zeros(Nx+1)
 
 def distribution(s): #funkcija raspodjele cestica za t=0
     if s > -0.8*dx and s < 0.8*dx:
-        return 1/dx
+        return 1.0/dx
     else:
         return 0.0
 
@@ -23,12 +23,18 @@ def distribution(s): #funkcija raspodjele cestica za t=0
     lin0 = ""
     for p in range(len(dif1)): #pocetno stanje sustava
         dif1[p] = distribution(-100.0+p*dx)
+        if (dif1[p] == 0.0 and dif1[p-1] == 1.0/dx): #za ocuvanje mase
+            U = dif1[p-1]
+            dif1[u-1] = U/2
+        elif (dif1[p] == 1.0/dx and dif1[p-1] == 0.0):
+            U = dif1[p]
+            dif1[p] = U/2
         lin0 += f"%9.7f " %(distribution(-100.0+p*dx))
     lin0 += "\n"
     wr.write(lin0)
-    for t in range(1, Nt):
+    for t in range(1, Nt): #koraci u vremenu
         lin = ""
-        for x in range(1, Nx):
+        for x in range(1, Nx): #koraci po koordinatama
             dif2[x] = alpha*(dif1[x+1]+dif1[x-1])+(1-2*alpha)*dif1[x]
         dif2[0], dif2[-1] = left, right
         dif1 = np.copy(dif2)
@@ -61,7 +67,8 @@ with writer.saving(fig, "diffusion.gif", 120):
         plt.ylabel('$\u03C1$(x,t) / cm$^{-1}$')
         plt.legend(loc='upper right')
         plt.xlim(-100.0, 100.0)
-        plt.ylim(0.0, 0.3)
-        plt.text(70.0, 0.26, s='t={}s'.format(j), fontsize='medium')
+        plt.ylim(0.0, 0.2)
+        plt.text(65.0, 0.17, s='t={}s'.format(j), fontsize='medium')
+        plt.grid(lw=0.3, linestyle=':')
         writer.grab_frame()
     
