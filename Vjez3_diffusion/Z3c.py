@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 from matplotlib.animation import PillowWriter
 import matplotlib.ticker as tick
 
-dx = 0.5
+dx = 2.0
 P, rho = np.zeros((200, int(200.0/dx)+1)), np.zeros((200, int(200.0/dx)+1))
 xpos = np.arange(-100.0, 100.0+dx, dx)
 
@@ -26,7 +26,7 @@ with open('diffusion.txt', 'r') as re2:
             rho[i, j] = float(val2[j])
     re2.close()
 
-text = 'walkers: N=64000, x$_{i}$(t=0)=0.0\n\t\t$\u0394$x\u2208[-3,3] cm, $\u0394$t=1 s\ndiffusion: D=1.5 cm$^{2}$s$^{-1}$, $\u03C1$(x,t=0)=$\u03B4$(x) cm$^{-1}$\n\t\t$\u0394$x=0.5 cm, $\u0394$t=0.05 s'
+text = 'walkers:   N=64000, x$_{i}$(t=0)=0.0\n\t\t$\u0394$x\u2208[-3,3] cm, $\u0394$t=1 s\ndiffusion: D=1.5 cm$^{2}$s$^{-1}$, $\u03C1$(x,t=0)=$\u03B4$(x) cm$^{-1}$\n\t\t$\u0394$x=2.0 cm, $\u0394$t=0.1 s'
 
 fig = plt.figure(figsize=(10,7), dpi=120)
 metadata = dict(title="Distributions")

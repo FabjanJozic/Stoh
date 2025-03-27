@@ -2,9 +2,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.animation import PillowWriter
 
-dx = 0.5
+dx = 2.0
 D = 1.5 #D=1.495273208054622 iz Z3a
-dt = 0.05 #izracunato preko dx^2 => 2Ddt
+dt = 0.1 #izracunato preko dx^2 > 2Ddt
 
 Nx = int(200.0/dx)
 Nt = int(200.0/dt)
@@ -19,16 +19,10 @@ def distribution(s): #funkcija raspodjele cestica za t=0
     else:
         return 0.0
 
-'''with open('diffusion.txt', 'w') as wr:
+with open('diffusion.txt', 'w') as wr:
     lin0 = ""
     for p in range(len(dif1)): #pocetno stanje sustava
         dif1[p] = distribution(-100.0+p*dx)
-        if (dif1[p] == 0.0 and dif1[p-1] == 1.0/dx): #za ocuvanje mase
-            U = dif1[p-1]
-            dif1[u-1] = U/2
-        elif (dif1[p] == 1.0/dx and dif1[p-1] == 0.0):
-            U = dif1[p]
-            dif1[p] = U/2
         lin0 += f"%9.7f " %(distribution(-100.0+p*dx))
     lin0 += "\n"
     wr.write(lin0)
@@ -43,7 +37,7 @@ def distribution(s): #funkcija raspodjele cestica za t=0
                 lin += f"%9.7f " %(dif2[xx])
             lin += "\n"
             wr.write(lin)
-    wr.close()'''
+    wr.close()
     
 with open('diffusion.txt', 'r') as re:
     R = re.readlines()
@@ -52,13 +46,14 @@ with open('diffusion.txt', 'r') as re:
         row = R[i].strip().split()
         for j in range(len(row)):
             Dif[i, j] = float(row[j])
+    re.close()
             
 xpos = np.arange(-100.0, 100.0+dx, dx)
 
 fig = plt.figure(figsize=(10,7), dpi=120)
 metadata = dict(title="Diffusion")
 plt.rcParams.update({'font.size': 15}) #type:ignore
-writer = PillowWriter(fps=15, metadata=metadata) #type: ignore
+writer = PillowWriter(fps=10, metadata=metadata) #type: ignore
 with writer.saving(fig, "diffusion.gif", 120):
     for j in range(200):
         plt.clf()

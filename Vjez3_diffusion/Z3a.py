@@ -6,11 +6,11 @@ from matplotlib.animation import PillowWriter
 
 Nw = 64000
 Nt = 200
-Dx = 0.5
+Dx = 2.0
 walkers = np.zeros(Nw)
 r_MS, time = [0.0], [0]
 
-'''with open('probability.txt', 'w') as wr:
+with open('probability.txt', 'w') as wr:
     lin0 = ""
     #zapisivanje pocetne pozicije
     prob0 = np.zeros(int(200.0/Dx)+1)
@@ -41,7 +41,7 @@ r_MS, time = [0.0], [0]
         r_MS.append(r/Nw)
         time.append(t)
         t += 1
-    wr.close()'''
+    wr.close()
 
 '''const, b, r, p, std_err = S.linregress(time, r_MS)
 D = const/2
@@ -78,8 +78,8 @@ xpos = np.arange(-100.0, 100.0+Dx, Dx)
 fig = plt.figure(figsize=(10,7), dpi=120)
 metadata = dict(title="Walkers probability")
 plt.rcParams.update({'font.size': 15}) #type:ignore
-writer = PillowWriter(fps=15, metadata=metadata) #type: ignore
-with writer.saving(fig, "probability.gif", 120):
+writer = PillowWriter(fps=10, metadata=metadata) #type: ignore
+with writer.saving(fig, "walkers.gif", 120):
     for t in range(Nt):
         plt.clf()
         plt.plot(xpos, P[t, :], lw=2.5, color='magenta', label='P$_{1D}$(x,t)')
@@ -87,6 +87,7 @@ with writer.saving(fig, "probability.gif", 120):
         plt.ylabel('P$_{1D}$(x,t) / cm$^{-1}$')
         plt.legend(loc='upper right')
         plt.xlim(-100.0, 100.0)
-        plt.ylim(0.0, 0.3)
-        plt.text(70.0, 0.26, s='t={}s'.format(t), fontsize='medium')
+        plt.ylim(0.0, 0.2)
+        plt.text(65.0, 0.17, s='t={}s'.format(t), fontsize='medium')
+        plt.grid(lw=0.3, linestyle=':')
         writer.grab_frame()        
