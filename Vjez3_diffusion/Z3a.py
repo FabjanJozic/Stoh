@@ -31,7 +31,7 @@ with open('probability.txt', 'w') as wr:
             dx = -3.0+6*np.random.rand()
             walkers[w] += dx
             if walkers[w] >= -100.0 and walkers[w] <= 100.0:
-                i = int((walkers[w]+100.0)/Dx+Dx/2)
+                i = int((walkers[w]+100.0+0.5)/Dx)
                 prob[i] += 1
                 r += walkers[w]**2
         for x in range(int(200.0/Dx)+1):
