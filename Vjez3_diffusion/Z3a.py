@@ -31,7 +31,7 @@ with open('probability.txt', 'w') as wr:
             dx = -3.0+6*np.random.rand()
             walkers[w] += dx
             if walkers[w] >= -100.0 and walkers[w] <= 100.0:
-                i = int((walkers[w]+100.0)/Dx)
+                i = int((walkers[w]+100.0)/Dx+Dx/2)
                 prob[i] += 1
                 r += walkers[w]**2
         for x in range(int(200.0/Dx)+1):
@@ -79,7 +79,7 @@ fig = plt.figure(figsize=(10,7), dpi=120)
 metadata = dict(title="Walkers probability")
 plt.rcParams.update({'font.size': 15}) #type:ignore
 writer = PillowWriter(fps=10, metadata=metadata) #type: ignore
-with writer.saving(fig, "walkers.gif", 120):
+with writer.saving(fig, "probability.gif", 120):
     for t in range(Nt):
         plt.clf()
         plt.plot(xpos, P[t, :], lw=2.5, color='magenta', label='P$_{1D}$(x,t)')
