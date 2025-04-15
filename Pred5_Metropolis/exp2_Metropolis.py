@@ -6,20 +6,20 @@ def f(x): #funkcija x^2 koja se integrira
 def p(x): #funkcija raspodjele vjerojatnosti
     return np.exp(-(x**2)/2)
 
-N = 100000 #moguci broj dogadaja
+N, Nw = 100000, 1000 #moguci broj dogadaja i broj setaca
 burn = 0 #pocetni broj koraka koji cemo zanemariti jer najvjerojatnije nisu dobri
-delta = 5.0
-accept = 0 #broj prihvacenih dogadaja
+delta = 2.0
 
 with open('exp2_Metropolis.txt', 'w') as wr:
+    accept = 0 #broj prihvacenih dogadaja
     x0 =[] #pocetni polozaji
-    for i in range(100):
-        x0.append(-10.0+20*np.random.rand())
-    I = 0.0
+    for i in range(Nw):
+        x0.append(-5.0+10*np.random.rand())
     for j in range(1, int(N+burn+1)):
-        for i in range(100):
-            xn = x0[i] + np.random.uniform(-delta, delta)
-            if np.abs(xn) > 10.0: #rub intervala integracije
+        I = 0.0
+        for i in range(Nw):
+            xn = x0[i]-delta+2*delta*np.random.rand()
+            if np.abs(xn) > 5.0: #rub intervala integracije
                 xn = x0[i]
             w = p(xn)/p(x0[i])
             if w >= 1.0:
@@ -32,7 +32,8 @@ with open('exp2_Metropolis.txt', 'w') as wr:
                     x0[i] = xn
                     accept += 1
         if j > burn and j%100 == 0: #odbacivanje pocetnog broja koraka
-            wr.write(f"%7d %6.2f\n" %(j, I))
+            wr.write(f"%7d %7.3f\n" %(j, I))
+    accept /= Nw
     wr.close()
 print(accept/N)
 
