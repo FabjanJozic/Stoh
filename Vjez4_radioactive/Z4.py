@@ -13,7 +13,7 @@ t0, tN = 0.0, 60.0 #pocetno i konacno vrijeme
 p1, p2 = L_Sb*dt, L_Te*dt #vjerojatnosti prijelaza
 
 #kod za numericno racunanje
-'''with open('num_decay_dt1.txt', 'w') as wr:
+with open('num_decay_dt1.txt', 'w') as wr:
     wr.write(f"%6d %6d %6d %8.1f\n" %(atoms[0], atoms[1], atoms[2], t0))
     while t0 < tN:
         N1, N2, N3 = atoms[0], atoms[1], atoms[2]
@@ -25,7 +25,7 @@ p1, p2 = L_Sb*dt, L_Te*dt #vjerojatnosti prijelaza
         atoms[0], atoms[1], atoms[2] = N1, N2, N3
         t0 += dt
         wr.write(f"%6d %6d %6d %8.1f\n" %(atoms[0], atoms[1], atoms[2], t0))
-    wr.close()'''
+    wr.close()
         
 #kod za analiticko
 '''with open('ana_decay_dt1.txt', 'w') as wr:
