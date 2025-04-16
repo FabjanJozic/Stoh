@@ -5,7 +5,7 @@ sys.getdefaultencoding()
 
 '''
 Ovaj kod je optimiziran koristenjem numpy paketa. Vektorizacija
-unutar numpya je brza od obicnih petlji za 2 reda veličine.
+unutar numpya je brza od obicnih petlji za 2 reda velicine.
 '''
 
 n1 = 5000000

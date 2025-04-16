@@ -6,9 +6,9 @@ def f(x): #funkcija x^2 koja se integrira
 def p(x): #funkcija raspodjele vjerojatnosti
     return np.exp(-(x**2)/2)
 
-N, Nw = 100000, 1000 #moguci broj dogadaja i broj setaca
-burn = 0 #pocetni broj koraka koji cemo zanemariti jer najvjerojatnije nisu dobri
-delta = 2.0
+N, Nw = 100000, 200 #moguci broj dogadaja i broj setaca
+burn = 7000 #pocetni broj koraka koji cemo zanemariti jer najvjerojatnije nisu dobri
+delta = 4.0
 
 with open('exp2_Metropolis.txt', 'w') as wr:
     accept = 0 #broj prihvacenih dogadaja
@@ -32,11 +32,27 @@ with open('exp2_Metropolis.txt', 'w') as wr:
                     x0[i] = xn
                     accept += 1
         if j > burn and j%100 == 0: #odbacivanje pocetnog broja koraka
-            wr.write(f"%7d %7.3f\n" %(j, I))
+            wr.write(f"%7d %7.3f\n" %(j, I/Nw))
     accept /= Nw
     wr.close()
-print(accept/N)
+print(accept/(N+burn))
 
+with open('exp2_Metropolis.txt', 'r') as re:
+    R = re.readlines()
+    Nv, Iv = [], []
+    for u in range(len(R)):
+        nval, ival = R[u].strip().split()
+        Nv.append(float(nval))
+        Iv.append(float(ival))
+    re.close()
+        
+fig = plt.figure(figsize=(11,4), dpi=110)
+axes = fig.add_axes([0.15, 0.15, 0.75, 0.70])
+plt.rcParams.update({'font.size': 10}) #type: ignore
+axes.plot(Nv, Iv, color='red', lw=1.0, label='Int val')
+axes.grid(lw=0.3, linestyle=':')
+axes.legend()
+plt.show()
   
 '''
 # Metropolis algorithm
