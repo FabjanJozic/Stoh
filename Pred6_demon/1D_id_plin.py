@@ -23,7 +23,8 @@ for i in range(1, burn+Nk+1):
             Ed -= dE
             v[j] = v_prob
             accept += 1
-        brz.append(v[j]**2)
+        if i == Nk+burn: #gleda se raspodjela brzina samo u konacnom trenutku
+            brz.append(v[j]**2)
     if (i > burn) and (i%500 == 0):
         ene.append(np.mean(E))
         demon.append(Ed)
