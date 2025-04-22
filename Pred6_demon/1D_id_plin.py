@@ -12,7 +12,7 @@ burn = 5000 #broj odbacenih koraka
 Nk = 20000 #broj koraka
 
 accept = 0
-ene, demon, step = [], [], []
+energy, demon, step = [], [], []
 for i in range(1, burn+Nk+1):
     brz = [] #lista za v^2
     for j in range(N):
@@ -26,7 +26,7 @@ for i in range(1, burn+Nk+1):
         if i == Nk+burn: #gleda se raspodjela brzina samo u konacnom trenutku
             brz.append(v[j]**2)
     if (i > burn) and (i%500 == 0):
-        ene.append(np.mean(E))
+        energy.append(np.mean(E))
         demon.append(Ed)
         step.append(i)
 accept /= (Nk+burn)*N
