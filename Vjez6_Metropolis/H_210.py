@@ -1,93 +1,87 @@
 import numpy as np
 
 NbSkip = 50 #broj preskocenih blokova
-Nb = 200 #ukupni broj blokova
+Nb = 200 #broj blokova
 Nk = 100 #broj koraka
 Nw = 100 #broj setaca
 Nacc = 100 #broj koraka za provjeru prihvacanja
 
-def Psi(r, z): #valna funkcija
-    return z*np.exp(-r/2.)
+def Psi(r, z): #valna funkcija |2,1,0> stanja
+    return z*np.exp(-r/2.0)
 
-ib, ik = 1, 0  #indeksi blokova i koraka
-x = np.zeros((4, Nw+1)) #koordinate setaca
-xp = np.zeros(4) #koordinate probnog setaca
-dX = np.array([0, 1.5, 1.5, 1.5]) #maksimalne vrijednosti koraka
-f = np.zeros(Nw+1) #vrijednost funkcije f (radijalna udaljenost)
-P = np.zeros(Nw+1) #vjerojatnost nalazenja na polozaju X
+x = np.random.uniform(-7.0, 7.0, (3, Nw))  #pocetni polozaji setaca
+dX = np.array([1.5, 1.5, 1.5])             #pocetni maksimalni koraci setaca
+f = np.zeros(Nw)                          #funkcija za radijalnu udaljenost <r>
+P = np.zeros(Nw)                          #|Ψ|²
+dDX = 0.05                                #faktor promjene maksimalnih koraka setaca
 
-ff = open("r.dat", "w") #datoteka za spremanje srednje vrijednosti
-frNw = open("rNw.dat", "w") #datoteka za spremanje polozaja setaca
-for iw in range(1, Nw+1):
-    rp2 = 0.0
-    for k in range(1, 4):
-        x[k][iw] = 14.0*(np.random.rand()-0.5)
-        rp2 += x[k][iw]*x[k][iw]
-    frNw.write("%7d  %13.8e  %13.8e  %13.8e\n" % ((ib-1)*Nk+ik, x[1][iw], x[2][iw], x[3][iw]))
-    rp = np.sqrt(rp2)
-    tmp = Psi(rp, x[3][iw])
-    P[iw] = tmp*tmp #Psi^2
-    f[iw] = rp
+#izracun pocetnih vrijdnosti r, z i |Ψ|²
+r2 = np.sum(x**2, axis=0)
+r = np.sqrt(r2)
+P = Psi(r, x[2])**2
+f = r.copy()
+
+ff = open("r_H210.dat", "w") #file za <r>
+frNw = open("rNw_H210.dat", "w") #file za polozaje setaca
+
+ff.write("# Block   <r> (block average)   <r> (cumulative average)\n")
+frNw.write("# Step    x                  y                  z\n")
+
+for iw in range(Nw): #spremanje pocetnih vrijednosti
+    frNw.write("{:<7d} {:>13.8f} {:>13.8f} {:>13.8f}\n".format(0, x[0, iw], x[1, iw], x[2, iw]))
 frNw.write("\n\n")
 
-acc = 0.0 #broj prihvacenih setaca
+acc = 0 #broj prihvacenih setaca
 Sbf = 0.0 #suma srednjih vrijednosti po blokovima
 Sbf2 = 0.0
 
-for ib in range(1-NbSkip, Nb+1):
-    '''Indeksacija pocinje od negativne vrijednosti da mozemo odbaciti sve vrijednosti do NbSkip.'''
-    Skf = 0.0 #suma srednjih vrijednosti po koracima
+for ib in range(1-NbSkip, Nb+1): #Metropolisova petlja
+    Skf = 0.0 #suma srednjih vrijednosti po setacima
     if ib == 1:
-        acc = 0.0
-    for ik in range(1, Nk+1): #indeks koraka
-        Swf = 0.0 #suma vrijednosti f po svim setacima
-        for iw in range(1, Nw+1):
-            rp2 = 0.0
-            for k in range(1, 4):
-                dx = 2.0*(np.random.rand()-0.5)*dX[k]
-                xp[k] = x[k][iw]+dx
-                rp2 += xp[k]*xp[k]
-            rp = np.sqrt(rp2) #r (radijalna udaljenost) probnog polozaja
-            tmp = Psi(rp, xp[3])
-            Pp = tmp*tmp #vjerojatnost za probni polozaj
-            T = Pp/P[iw] #vjerojatnost prijelaza
+        acc = 0
+    for ik in range(1, Nk+1):
+        Swf = 0.0 #suma funkcije f po setacima
+        for iw in range(Nw):
+            dx = (2*np.random.rand(3)-1)*dX
+            xp = x[:, iw]+dx
+            rp2 = np.sum(xp**2)
+            rp = np.sqrt(rp2) #radijalna udaljenost probnog polozaja
+            tmp = Psi(rp, xp[2])
+            Pp = tmp * tmp
+            T = Pp/P[iw] #vjerojatnost za prihvacanje pomaka
             if T >= 1 or np.random.rand() <= T:
-                for k in range(1, 4):
-                    x[k][iw] = xp[k]
-                acc += 1
+                x[:, iw] = xp
                 P[iw] = Pp
                 f[iw] = rp
+                acc += 1
             Swf += f[iw]
-        if ((ib-1+NbSkip)*Nk+ik)%Nacc == 0 and ib < 1:
+        #podesavanje velicine koraka na pocetku simulacije
+        if ((ib-1+NbSkip)*Nk+ik) % Nacc == 0 and ib < 1:
             accP = acc/(Nacc*Nw)
-            # 1) PRILAGODITE MAX KOORDINATNE POMAKE (ADJUST MAX COORDINATE CHANGES)
-            
-            
-            if ib%10: #nakon stabilizacije sustava
+            for k in range(3):
+                dX[k] *= (1+dDX) if accP > 0.5 else (1-dDX)
+            if ib % 10:
                 print("ib = %d, accP = %3.1lf\n" % (ib, accP*100.0))
-            acc = 0.0
+            acc = 0
         if ib > 0:
             Skf += Swf/Nw
+    #dio simulacije koji se prihvaca
     if ib > 0:
         Sbf += Skf/Nk
-        Sbf2 += Skf*Skf/(Nk*Nk)
+        Sbf2 += (Skf/Nk)**2
         accP = acc/(ib*Nw*Nk) #udio prihvacenih koraka
-        # 2) PRILAGODITE MAX KOORDINATNE POMAKE (ADJUST MAX COORDINATE CHANGES)
-        
-        
-        if ib%(Nb/10) == 0:
+        for k in range(3):
+            dX[k] *= (1+dDX) if accP > 0.5 else (1-dDX)
+        if ib % (Nb//10) == 0:
             print("ib = %d, accP = %3.1lf\n" % (ib, accP*100.0))
-        # 3) POHRANITE SVE POLOZAJE U frNw (STORE ALL POSITIONS IN frNw)
-        
-        
+        for iw in range(Nw): #biljezenje polozaja setaca
+            frNw.write("{:<7d} {:>13.8f} {:>13.8f} {:>13.8f}\n".format((ib-1)*Nk+ik, x[0, iw], x[1, iw], x[2, iw]))
         frNw.write("\n\n")
-        ff.write("%7d  %13.8e  %13.8e\n" % (ib, Skf/Nk, Sbf/ib))
-# 4) IZRACUNAJTE PROSJEK, DEVIJACIJU I PRIHVACENOST: ave_f, sig_f, accP
-# 4) (CALCULATE AVERAGE, DEVIATION, ACCEPTANCE: ave_f, sig_f, accP)
+        ff.write("{:<7d} {:>20.8f} {:>20.8f}\n".format(ib, Skf / Nk, Sbf / ib)) #spremanje <r> za dani blok
 
+ave_f = Sbf/Nb #prosjek prihvacenih koraka
+sig_f = np.sqrt((Sbf2/Nb)-ave_f**2) #devijacija za <r>
 
-
-'''print("\n accP = %4.1lf\n" % (accP * 100.0))
-print("\n max dx = %6.4lf, %6.4lf, %6.4lf\n" % (dX[1], dX[2], dX[3]))
-print("\n <r> = %8.5lf +- %8.5lf \n" % (ave_f, sig_f))'''
-
+print("\n accP = %4.1lf\n" % (accP*100.0))
+print("\n max dx = %6.4lf, %6.4lf, %6.4lf\n" % tuple(dX))
+print("\n <r> = %8.5lf +- %8.5lf \n" % (ave_f, sig_f))
