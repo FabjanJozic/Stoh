@@ -8,7 +8,7 @@ def Psi(r): #valna funkcija |3,0,0> stanja H atoma
 
 psi2 = [(Psi(rad[i])**2)*4*np.pi*rad[i]**2 for i in range(len(rad))]
 
-fig = plt.figure(figsize=(11,4), dpi=110)
+'''fig = plt.figure(figsize=(11,4), dpi=110)
 ax = fig.add_axes([0.10, 0.15, 0.85, 0.75])
 plt.rcParams.update({'font.size': 12}) #type: ignore
 ax.plot(rad, psi2, color='blue', lw=1.0, label='|3,0,0>')
@@ -18,4 +18,10 @@ ax.set_ylim(0.0, 0.12)
 ax.set_xlabel('r / a$_{0}$')
 ax.set_ylabel('$|\u03A8|^{2}$')
 ax.legend(loc='upper right')
-plt.show()
+plt.show()'''
+
+I = 0.0
+for k in range(len(rad)):
+    I += psi2[k]*0.01
+
+print(I)
