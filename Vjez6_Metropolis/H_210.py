@@ -1,19 +1,19 @@
 import numpy as np
 
-NbSkip = 50 #broj preskocenih blokova
+NbSkip = 70 #broj preskocenih blokova
 Nb = 200 #broj blokova
-Nk = 100 #broj koraka
-Nw = 100 #broj setaca
-Nacc = 100 #broj koraka za provjeru prihvacanja
+Nk = 150 #broj koraka
+Nw = 2000 #broj setaca
+Nacc = 150 #broj koraka za provjeru prihvacanja
 
 def Psi(r, z): #valna funkcija |2,1,0> stanja
     return z*np.exp(-r/2.0)
 
-x = np.random.uniform(-7.0, 7.0, (3, Nw))  #pocetni polozaji setaca
-dX = np.array([1.5, 1.5, 1.5])             #pocetni maksimalni koraci setaca
-f = np.zeros(Nw)                          #funkcija za radijalnu udaljenost <r>
-P = np.zeros(Nw)                          #|Ψ|²
-dDX = 0.05                                #faktor promjene maksimalnih koraka setaca
+x = np.random.uniform(-7.0, 7.0, (3, Nw)) #pocetni polozaji setaca
+dX = np.array([1.5, 1.5, 1.5]) #pocetni maksimalni koraci setaca
+f = np.zeros(Nw) #funkcija za radijalnu udaljenost <r>
+P = np.zeros(Nw) #|Ψ|²
+dDX = 0.05 #faktor promjene maksimalnih koraka setaca
 
 #izracun pocetnih vrijdnosti r, z i |Ψ|²
 r2 = np.sum(x**2, axis=0)
@@ -28,8 +28,8 @@ ff.write("# Block   <r> (block average)   <r> (cumulative average)\n")
 frNw.write("# Step    x                  y                  z\n")
 
 for iw in range(Nw): #spremanje pocetnih vrijednosti
-    frNw.write("{:<7d} {:>13.8f} {:>13.8f} {:>13.8f}\n".format(0, x[0, iw], x[1, iw], x[2, iw]))
-frNw.write("\n\n")
+    frNw.write("{:<7d} {:>12.6f} {:>12.6f} {:>12.6f}\n".format(0, x[0, iw], x[1, iw], x[2, iw]))
+frNw.write("\n")
 
 acc = 0 #broj prihvacenih setaca
 Sbf = 0.0 #suma srednjih vrijednosti po blokovima
@@ -75,9 +75,9 @@ for ib in range(1-NbSkip, Nb+1): #Metropolisova petlja
         if ib % (Nb//10) == 0:
             print("ib = %d, accP = %3.1lf\n" % (ib, accP*100.0))
         for iw in range(Nw): #biljezenje polozaja setaca
-            frNw.write("{:<7d} {:>13.8f} {:>13.8f} {:>13.8f}\n".format((ib-1)*Nk+ik, x[0, iw], x[1, iw], x[2, iw]))
-        frNw.write("\n\n")
-        ff.write("{:<7d} {:>20.8f} {:>20.8f}\n".format(ib, Skf / Nk, Sbf / ib)) #spremanje <r> za dani blok
+            frNw.write("{:<7d} {:>12.6f} {:>12.6f} {:>12.6f}\n".format((ib-1)*Nk+ik, x[0, iw], x[1, iw], x[2, iw]))
+        frNw.write("\n")
+        ff.write("{:<7d} {:>16.7f} {:>16.7f}\n".format(ib, Skf/Nk, Sbf/ib)) #spremanje <r> za dani blok
 
 ave_f = Sbf/Nb #prosjek prihvacenih koraka
 sig_f = np.sqrt((Sbf2/Nb)-ave_f**2) #devijacija za <r>
