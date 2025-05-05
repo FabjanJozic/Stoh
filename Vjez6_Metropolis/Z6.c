@@ -4,10 +4,10 @@
 #include "ran1.c" 
 
 #define NbSkip 50
-#define Nb 100
-#define Nk 300
-#define Nw 5000
-#define Nacc 300
+#define Nb 200
+#define Nk 500
+#define Nw 10000
+#define Nacc 500
 
 double Psi(double r);
 

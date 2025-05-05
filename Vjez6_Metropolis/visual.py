@@ -3,9 +3,9 @@ import matplotlib.pyplot as plt
 from matplotlib.animation import PillowWriter
 import matplotlib.ticker as tick
 
-rf = np.loadtxt('rNw_H300.dat', comments='#')
+'''rf = np.loadtxt('rNw_H300.dat', comments='#')
 
-Nw = 5000  #broj setaca
+Nw = 10000  #broj setaca
 steps = len(rf)//Nw
 
 fig = plt.figure(figsize=(7, 7), dpi=120)
@@ -33,12 +33,12 @@ with writer.saving(fig, "H_300.gif", dpi=120):
         ax.invert_yaxis()
         ax.invert_xaxis()
         ax.text(x=-20, y=-22, z=30, s=f"$\u03A8_{'H'}$(r)=|3,0,0>")
-        ax.text(x=-20, y=-22, z=26, s="N$_{W}$=5000, N$_{k}$=300")
+        ax.text(x=-20, y=-22, z=26, s="N$_{W}$=10000")
         ax.text(x=-22, y=25, z=26, s="t={} $\u0394$t".format(int(walkers[0,0])))
         plt.tight_layout()
-        writer.grab_frame()
+        writer.grab_frame()'''
         
-'''rfr = np.loadtxt('r_H300.dat', comments='#')
+rfr = np.loadtxt('r_H300.dat', comments='#')
 block, r, rb = [], [], []
 for _ in range(len(rfr)):
     val1, val2, val3 = rfr[_]
@@ -51,13 +51,13 @@ ax = fig.add_axes([0.10, 0.15, 0.85, 0.75])
 plt.rcParams.update({'font.size': 12}) #type: ignore
 ax.plot(block, rb, color='lime', lw=1.0, label='<r>$_{b}$')
 ax.plot(block, r, color='blue', lw=1.0, label='<r>')
-ax.set_xlim(0, 100)
+ax.set_xlim(0, 200)
 ax.set_ylim(13.46, 13.55)
-ax.set_xlabel('t / 300 $\u0394$t')
+ax.set_xlabel('t / 500 $\u0394$t')
 ax.set_ylabel('<r> / a$_{0}$')
-ax.xaxis.set_major_locator(tick.MultipleLocator(10))
+ax.xaxis.set_major_locator(tick.MultipleLocator(20))
 ax.yaxis.set_major_locator(tick.MultipleLocator(0.01))
-ax.text(x=3, y=13.54, s=f"N$_{'W'}$=5000, N$_{'b'}^{'-'}$=50, N$_{'b'}$=100, N$_{'k'}$=300")
+ax.text(x=3, y=13.54, s=f"N$_{'W'}$=10000, N$_{'b'}^{'-'}$=50, N$_{'b'}$=200, N$_{'k'}$=500")
 ax.legend(loc='upper right')
-plt.show() '''
+plt.show()
 
