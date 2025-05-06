@@ -40,8 +40,8 @@ for i in range(1, burn+Nk+1):
         sigmaS = np.sqrt(dels/ko)
         deld = Ed_s2/ko-(Ed_s/ko)**2
         sigmaD = np.sqrt(deld/ko)
-        outputS.write(f"{i:>6d} {-np.sqrt(abs(Es_s/ko)):>14.8f} {np.sqrt(sigmaS):>14.8e}\n")
-        outputD.write(f"{i:>6d} {np.sqrt(Ed_s/ko):>14.8f} {np.sqrt(sigmaD):>14.8e}\n")
+        outputS.write(f"{i:>6d} {Es_s/ko:>14.8f} {np.sqrt(sigmaS):>14.8e}\n")
+        outputD.write(f"{i:>6d} {Ed_s/ko:>14.8f} {np.sqrt(sigmaD):>14.8e}\n")
 accept /= (Nk+burn)*nw
 
 print(accept)
