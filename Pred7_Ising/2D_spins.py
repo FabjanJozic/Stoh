@@ -30,6 +30,9 @@ Nb = 5000 #broj blokova
 burn = 1500 #broj odbacenih koraka
 Naccept = 0.0
 
+
+#kod za racunanje energije i magnetizacije sustava, toplinskog kapaciteta, magnetske susceptibilnosti...
+'''
 output3 = open('Magnetisation.dat', 'w') #kumulativna vrijednost magnetizacije
 output4 = open('Magnetisation_b.dat', 'w') #magnetizacija po blokovima
 output5 = open('Energy.dat', 'w') #kumulativna vrijednost energije sustava
@@ -98,4 +101,6 @@ sus = (Mav2/ko-(Mav/ko)**2)/kT #magnetska susceptibilnost
 print("susceptibilnost po spinu \t", sus/max)
 print("toplinski kapacitet po spinu \t", C/max)
 print("udio prihvacanja \t", accept)
-        
+'''
+
+     
