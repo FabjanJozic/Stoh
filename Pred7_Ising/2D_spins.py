@@ -12,8 +12,8 @@ def energy(s): #energija jednog spina
         for j in range(1, max+1):
             h = 1 if i == max else i+1 #polozaj horizontalnog spina
             v = 1 if j == max else j+1 #polozaj vertikalnog spina
-            sum += Jv*s[i, j]*(s[i, v]+s[h, j])+s[i, j]*mH
-    return -sum
+            sum -= Jv*s[i, j]*(s[i, v]+s[h, j])+s[i, j]*mH
+    return sum
 
 def magnet(s): #ukupna magnetizacija sustava
     sum = 0.0
