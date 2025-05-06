@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 max = 32 #broj spinova u jednom smjeru
 kT = 2.0 #temperatura
 Jv = 1.0 #integral izmjene
-mH = 0.0 #magnetsko polje
+mH = 2.0 #magnetsko polje
 
 def energy(s): #energija jednog spina
     sum = 0.0
@@ -32,11 +32,11 @@ Naccept = 0.0
 
 
 #kod za racunanje energije i magnetizacije sustava, toplinskog kapaciteta, magnetske susceptibilnosti...
-'''
-output3 = open('Magnetisation.dat', 'w') #kumulativna vrijednost magnetizacije
-output4 = open('Magnetisation_b.dat', 'w') #magnetizacija po blokovima
-output5 = open('Energy.dat', 'w') #kumulativna vrijednost energije sustava
-output6 = open('Energy_b.dat', 'w') #energija po blokovima
+
+output3 = open('Magnetisation_H2.dat', 'w') #kumulativna vrijednost magnetizacije
+output4 = open('Magnetisation_b_H2.dat', 'w') #magnetizacija po blokovima
+output5 = open('Energy_H2.dat', 'w') #kumulativna vrijednost energije sustava
+output6 = open('Energy_b_H2.dat', 'w') #energija po blokovima
 
 S = np.ones((max+2, max+2), dtype=int) #pocetni sustav spinova
 E0 = energy(S)
@@ -72,8 +72,8 @@ for ib in range(1, Nb+burn+1):
         Eav2 += Eavb2/Nk
         Mav += Mavb/Nk
         Mav2 += Mavb2/Nk
-        output1 = open('SpinUp.dat', 'w') #koordinate za spin-up
-        output2 = open('SpinDown.dat', 'w') #koordinate za spin-down
+        output1 = open('SpinUp_H2.dat', 'w') #koordinate za spin-up
+        output2 = open('SpinDown_H2.dat', 'w') #koordinate za spin-down
         for j in range(1, max+1):
             for k in range(1, max+1):
                 if S[j, k] == 1:
@@ -85,10 +85,10 @@ for ib in range(1, Nb+burn+1):
         ko = ib-burn
         Edev = np.sqrt(Eav2/ko-(Eav/ko)**2)/np.sqrt(ko)
         Mdev = np.sqrt(Mav2/ko-(Mav/ko)**2)/np.sqrt(ko)
-        output3.write(f"{ib:>6d} {M0/ko:>12.7f} {np.sqrt(Mdev):>12.7f}\n")
-        output4.write(f"{ib:>6d} {Mav/ko:>12.7f}\n")
-        output5.write(f"{ib:>6d} {E0/ko:>12.7f} {np.sqrt(Edev):>12.7f}\n")
-        output6.write(f"{ib:>6d} {Eav/ko:>12.7f}\n")
+        output3.write(f"{ib:>6d} {Mav/ko:>12.7f} {np.sqrt(Mdev):>12.7f}\n")
+        output4.write(f"{ib:>6d} {Mavb/Nk:>12.7f}\n")
+        output5.write(f"{ib:>6d} {Eav/ko:>12.7f} {np.sqrt(Edev):>12.7f}\n")
+        output6.write(f"{ib:>6d} {Eavb/Nk:>12.7f}\n")
 output3.close()
 output4.close()
 output5.close()
@@ -101,6 +101,37 @@ sus = (Mav2/ko-(Mav/ko)**2)/kT #magnetska susceptibilnost
 print("susceptibilnost po spinu \t", sus/max)
 print("toplinski kapacitet po spinu \t", C/max)
 print("udio prihvacanja \t", accept)
-'''
 
-     
+
+rfE = np.loadtxt('Energy_H2.dat', usecols=(0,1))
+rfEb = np.loadtxt('Energy_b_H2.dat', usecols=1)
+rfM = np.loadtxt('Magnetisation_H2.dat', usecols=1)
+rfMb = np.loadtxt('Magnetisation_b_H2.dat', usecols=1)
+
+
+b, E, Eb, M, Mb = [], [], [], [], []
+for k in range(Nb):
+    b.append(rfE[k, 0])
+    E.append(rfE[k, 1])
+    Eb.append(rfEb[k])
+    M.append(rfM[k])
+    Mb.append(rfMb[k])
+
+fig, axes = plt.subplots(nrows=2, ncols=1, figsize=(10,8), dpi=120)
+plt.subplots_adjust(wspace=0.3, hspace=0.6)
+plt.rcParams.update({'font.size': 10}) #type: ignore
+axes[0].plot(b, Eb, color='cyan', lw=1.0, label='<E> - per block')
+axes[0].plot(b, E, color='blue', lw=1.0, label='<E> - cumulative')
+axes[0].set_xlabel('block')
+axes[0].set_ylabel('<E>')
+axes[0].set_xlim(burn, Nb+burn)
+axes[0].set_title('Energy of 2D Ising spin system, $\u03BC$H={}'.format(mH))
+axes[0].legend(loc='upper right')
+axes[1].plot(b, Mb, color='orange', lw=1.0, label='<E> - per block')
+axes[1].plot(b, M, color='red', lw=1.0, label='<E> - cumulative')
+axes[1].set_xlabel('block')
+axes[1].set_ylabel('<M>')
+axes[1].set_xlim(burn, Nb+burn)
+axes[1].set_title('Magnetisation of 2D Ising spin system, $\u03BC$H={}'.format(mH))
+axes[1].legend(loc='upper right')
+plt.show()     
