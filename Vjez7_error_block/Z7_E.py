@@ -8,7 +8,7 @@ U ovom kodu racuna se standardna devijacija energetskih vrijednosti iz "E.txt".
 
 #kod za racunanje srednje vrijednosti i standardne devijacije
 Nkmax = 200
-'''fE = np.loadtxt('E.txt', comments='#')
+fE = np.loadtxt('E.txt', comments='#')
 fstdev = open('st_dev_E.dat', 'w') #file za graf
 N = len(fE)
 
@@ -33,7 +33,7 @@ for Nk in range(1, Nkmax+1):
     var = ((Sf2b/Nb)-(Sfb/Nb)**2)/(Nb-1) #varijanca
     fstdev.write(f"{Nk:<3d} {Sfb/Nb:>12.7f} {np.sqrt(var):>10.7f}\n")
         
-fstdev.close()'''
+fstdev.close()
 
 fEdev0 = np.loadtxt('E_dev.dat', comments='#')
 fEdev = np.loadtxt('st_dev_E.dat')
