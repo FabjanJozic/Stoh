@@ -44,7 +44,9 @@ for i in range(Nkmax):
     mE.append(fEdev[i, 1])
     devE.append(1000*fEdev[i, 2])
     dev0.append(1000*fEdev0[i, 1])
-    
+
+mdev = f"{np.mean(devE)/1000:<5.3f}"
+
 fig = plt.figure(figsize=(8,5), dpi=110)
 ax = fig.add_axes([0.10, 0.15, 0.85, 0.70])
 plt.rcParams.update({'font.size': 10}) #type: ignore
@@ -59,6 +61,7 @@ ax.yaxis.set_major_locator(tick.MultipleLocator(5))
 ax.grid(lw=0.2, linestyle=':')
 ax.set_title('Standardna devijacija $\u03C3_{E}$ energije samovezanja $E$ klastera\n$^{4}$He$_{20}$ za vremenski korak $\u0394\u03C4=10^{-7}$ mK$^{-1}$')
 ax.legend(loc='upper right')
+ax.text(10, 65, s='$\u03C3_{}$={} mK'.format('E', mdev))
 plt.show()
 
 '''fig = plt.figure(figsize=(10,5), dpi=110)
