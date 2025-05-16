@@ -23,7 +23,6 @@ dES, dED = 0.0, 0.0
 
 for k in range(1, Nk+1):
     ESk, EDk = 0.0, 0.0 #energije po koraku
-    mES, mED = 0.0, 0.0
     for j in range(Nw):
         ip = int(np.random.rand()*N) #indeks cestice
         if ip == N:
@@ -39,12 +38,10 @@ for k in range(1, Nk+1):
         if k >= burn:
             ESk += dES
             EDk += dED
-    mES += ESk/Nw
-    mED += EDk/Nw
     if k >= burn and k%10 == 0:
         ko = k-burn+1
-        output1.write(f"{k:>6d} {mES+ES:>15.11f} {dES+ES:>15.11f}\n")
-        output2.write(f"{k:>6d} {mED+ED:>15.11f} {dED+ED:>15.11f}\n")
+        output1.write(f"{k:>6d} {ESk/Nw+ES:>15.11f} {dES+ES:>15.11f}\n")
+        output2.write(f"{k:>6d} {EDk/Nw+ED:>15.11f} {dED+ED:>15.11f}\n")
 
 output1.close()
 output2.close()
@@ -54,15 +51,15 @@ output3 = open('table.txt', 'w') #tablica za E=20 i N=80
 input1 = np.loadtxt('ES.dat', usecols=2)
 input2 = np.loadtxt('ED.dat', usecols=2)
 
-fES = np.mean(input1) #srednja vrijednost ukupne energije sustava
-fED = np.mean(input2) #srednja vrijednost ukupne energije demona
-print(fES, fED)
+mES = np.mean(input1) #srednja vrijednost ukupne energije sustava
+mED = np.mean(input2) #srednja vrijednost ukupne energije demona
+print(mES, mED)
 
 output3.write(f"{'N':14s} {N:<8d}\n")
 output3.write(f"{'E':14s} {ES+ED:<8.0f}\n")
-output3.write(f"{'<ED>':14s} {fED:<8.1f}\n")
-output3.write(f"{'<ES>':14s} {fES:<8.1f}\n")
-output3.write(f"{'<ES>/N':14s} {fES/N:<8.5f}\n")
-output3.write(f"{'<ES>/(N*<ED>)':14s} {fES/(N*fED):<8.3f}\n")
-output3.write(f"{'0.5N*<ED>':14s} {0.5*N*fED:<8.0f}\n")
+output3.write(f"{'<ED>':14s} {mED:<8.1f}\n")
+output3.write(f"{'<ES>':14s} {mES:<8.1f}\n")
+output3.write(f"{'<ES>/N':14s} {mES/N:<8.5f}\n")
+output3.write(f"{'<ES>/(N*<ED>)':14s} {mES/(N*mED):<8.3f}\n")
+output3.write(f"{'0.5N*<ED>':14s} {0.5*N*mED:<8.0f}\n")
 output3.close()
