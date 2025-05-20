@@ -39,9 +39,9 @@ bl, mr, dev = [], [], []
 for i in range(len(fo)):
     bl.append(fo[i, 0])
     mr.append(fo[i, 1])
-    dev.append(fo[i, 2])
+    dev.append(1000*fo[i, 2])
     
-fig = plt.figure(figsize=(12,5), dpi=110)
+'''fig = plt.figure(figsize=(12,5), dpi=110)
 ax = fig.add_axes([0.10, 0.15, 0.85, 0.70])
 plt.rcParams.update({'font.size': 10}) #type: ignore
 ax.errorbar(bl, mr, yerr=dev, fmt='o-', capsize=2, label='data', ecolor='green', elinewidth=0.3,
@@ -55,9 +55,9 @@ ax.yaxis.set_major_locator(tick.MultipleLocator(0.0005))
 ax.grid(lw=0.2, linestyle=':')
 ax.set_title('Vrijednosti srednje radijalne udaljenosti <r> elektrona u\n|3,0,0> stanju $^{1}$H atoma dobivene dodatnim blokiranjem')
 ax.legend(loc='upper right')
-plt.show()
+plt.show()'''
 
-'''mdev = f"{np.mean(dev)/1000:<5.5f}"
+mdev = f"{np.mean(dev)/1000:<5.5f}"
 
 fig = plt.figure(figsize=(8,5), dpi=110)
 ax = fig.add_axes([0.10, 0.15, 0.85, 0.70])
@@ -73,4 +73,4 @@ ax.grid(lw=0.2, linestyle=':')
 ax.set_title('Standardna devijacija $\u03C3_{r}$ radijalne udaljenosti <r> elektrona u\n|3,0,0> stanju $^{1}$H atoma')
 #ax.legend(loc='upper right')
 ax.text(4, 1.3, s='$\u03C3_{}$={} $\u212B$'.format('r', mdev))
-plt.show()'''
+plt.show()
