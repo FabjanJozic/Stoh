@@ -1,6 +1,6 @@
 import numpy as np
 
-L = 4 #dimenzija resetke L*L
+L = 16 #dimenzija resetke L*L
 kT0 = 1.0 #podetna temperatura
 dkT = 0.2
 NkT = 15 #broj temperaturnih koraka (4.0-1.0)/0.2
