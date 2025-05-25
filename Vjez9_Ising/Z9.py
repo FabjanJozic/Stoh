@@ -1,6 +1,6 @@
 import numpy as np
 
-L = 16 #dimenzija resetke L*L
+L = 4 #dimenzija resetke L*L
 kT0 = 1.0 #podetna temperatura
 dkT = 0.2
 NkT = 15 #broj temperaturnih koraka (4.0-1.0)/0.2
@@ -35,11 +35,11 @@ S = np.ones((L+2, L+2), dtype=int) #pocetna konfiguracija S[i,j]=1
 fMag = open('f_M_{}x{}.dat'.format(L, L), 'w') #magnetizacija
 fEne = open('f_E_{}x{}.dat'.format(L, L), 'w') #energija
 fSmap = open('f_S_map_{}x{}.dat'.format(L, L), 'w') #mapa spinova
-fTCx = open('f_TCx_{}x{}.dat'.format(L, L), 'w') #temperatura, toplinski kapacitet, susceptibilnost
+fTCxEM = open('f_TCxEM_{}x{}.dat'.format(L, L), 'w') #temperatura, toplinski kapacitet, susceptibilnost, energija, magnetizacija
 
 fMag.write("#b - Mb - M - sigM\n")
 fEne.write("#b - Eb - E - sigE\n")
-fTCx.write("#T - C - x\n")
+fTCxEM.write("#T - C - x - E - M\n")
 
 for it in range(NkT+1):
     kT = kT0+it*dkT #temperatura sustava
@@ -94,7 +94,7 @@ for it in range(NkT+1):
     fMag.write("\n\n")
     C = (mean_E2-mean_E**2)/(kT**2) #toplinski kapacitet
     sus = (mean_M2-mean_M**2)/kT #susceptibilnost
-    fTCx.write(f"{kT:>4.1f} {C/(L**2):>15.9f} {sus/(L**2):>15.9f}\n")
+    fTCxEM.write(f"{kT:>4.1f} {C/(L**2):>15.9f} {sus/(L**2):>15.9f} {mean_E/(L**2):>15.7f} {mean_M/(L**2):>15.7f}\n")
     reject /= Nk*(Nb+Nb_skip)
     print("-------------------------------------------\n")
     print("<E> = {}\n".format(mean_E))
@@ -105,5 +105,5 @@ for it in range(NkT+1):
 fMag.close()
 fEne.close()
 fSmap.close()
-fTCx.close()
+fTCxEM.close()
             
