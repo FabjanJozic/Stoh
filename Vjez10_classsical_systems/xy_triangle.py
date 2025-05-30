@@ -7,7 +7,7 @@ Raspodjela u 'my2*2' redaka i 'mx' stupaca unutar podrucja definiranim za 'Lx' i
 '''
 
 
-my2 = 3 #broj parova redaka u y smjeru \ ukupno/2
+my2 = 10 #broj parova redaka u y smjeru \ ukupno/2
 rho = 0.08 #pocetna gustoca sustava
 Nw = 1 #broj setaca
 
