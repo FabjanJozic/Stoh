@@ -7,8 +7,8 @@ Raspodjela u 'my2*2' redaka i 'mx' stupaca unutar podrucja definiranim za 'Lx' i
 '''
 
 
-my2 = 10 #broj parova redaka u y smjeru \ ukupno/2
-rho = 0.08 #pocetna gustoca sustava
+my2 = 8 #broj parova redaka u y smjeru \ ukupno/2
+rho = 0.92 #pocetna gustoca sustava
 Nw = 1 #broj setaca
 
 dmx = my2*np.sqrt(3.0)+0.5
@@ -46,7 +46,7 @@ for iw in range(1, Nw+1):
 fxy.close()
 
 #kod za vizualizaciju resetke
-'''import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 
 er = np.loadtxt('xy.dat')
 x, y = [], []
@@ -55,4 +55,6 @@ for j in range(len(er)):
     y.append(er[j, 1])
     
 plt.scatter(x, y)
-plt.show()'''
+plt.title('$\u03C1$={}, Na={}, a={:.6f}'.format(rho, Na, a))
+plt.grid(lw=0.2, linestyle='--')
+plt.show()
