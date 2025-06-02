@@ -1,7 +1,9 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.ticker as tick
+import warnings
 
+#kod za vizualizciju toplinskog kapaciteta i susceptibilnosti sustava za L=4,8,16
 '''f4 = np.loadtxt('f_TCxEM_4x4.dat', comments='#', usecols=(0,1,2))
 f8 = np.loadtxt('f_TCxEM_8x8.dat', comments='#', usecols=(0,1,2))
 f16 = np.loadtxt('f_TCxEM_16x16.dat', comments='#', usecols=(0,1,2))
@@ -58,7 +60,8 @@ ax.set_title('2D Isingov model spinova: magnetska susceptibilnost po čestici')
 plt.show()
 '''
 
-fEM4 = np.loadtxt('f_TCxEM_4x4.dat', comments='#', usecols=(0,3,4))
+#kod za vizualizaciju energije i magnetizacije sustava za L=4,8,16
+'''fEM4 = np.loadtxt('f_TCxEM_4x4.dat', comments='#', usecols=(0,3,4))
 fEM8 = np.loadtxt('f_TCxEM_8x8.dat', comments='#', usecols=(0,3,4))
 fEM16 = np.loadtxt('f_TCxEM_16x16.dat', comments='#', usecols=(0,3,4))
 
@@ -111,4 +114,33 @@ ax.yaxis.set_major_locator(tick.MultipleLocator(0.1))
 ax.grid(lw=0.2, linestyle=':')
 ax.legend(loc='upper right')
 ax.set_title('2D Isingov model spinova: srednja magnetizacija po čestici')
+plt.show()'''
+
+#kod za prikaz ravnoteznog uzorkovanja
+with warnings.catch_warnings():
+    warnings.simplefilter("ignore")
+    fnice16 = np.loadtxt('f_E_16x16.dat', comments='#', usecols=(0,1,2), max_rows=1000)
+
+ib, Eb, Eu = [], [], []
+
+for k in range(1000):
+    ib.append(fnice16[k, 0])
+    Eb.append(fnice16[k, 1])
+    Eu.append(fnice16[k, 2])
+
+fig = plt.figure(figsize=(12,5), dpi=110)
+ax = fig.add_axes([0.15, 0.15, 0.80, 0.70])
+plt.rcParams.update({'font.size': 10}) #type: ignore
+ax.plot(ib, Eb, color='lime', lw=1.0, label='<E$_{b}$>')
+ax.plot(ib, Eu, color='red', lw=1.2, label='<E$_{u}$>')
+ax.set_xlim(200, 1201)
+ax.set_ylim(-512.2, -499.8)
+ax.set_xlabel('block')
+ax.set_ylabel('<E>')
+ax.xaxis.set_major_locator(tick.MultipleLocator(100))
+ax.yaxis.set_major_locator(tick.MultipleLocator(1.0))
+ax.grid(lw=0.2, linestyle=':')
+ax.legend(loc='upper right')
+ax.set_title('2D Isingov model spinova: energija sustava za za L=16 i T=1.0 K')
+ax.text(x=215.0, y=-500.8, s=f"N$_{'b'}^{'+'}$=200, N$_{'b'}$=1000, N$_{'k'}$=1000")
 plt.show()
