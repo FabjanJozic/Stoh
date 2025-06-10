@@ -8,6 +8,10 @@ Nb = 100
 Nb_skip = 40
 alpha = 1.3 #parmetar probne valne funkcije
 
+h_ = 1.0 #reducirana Planckova konstanta
+m = 1.0 #masa cestice
+K = 1.0 #konstanta potencijalne energije
+
 def Psi(x): #valna funkcija
     if x >= 0.0:
         val = x*np.exp(-alpha*x*x)
