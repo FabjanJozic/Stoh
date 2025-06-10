@@ -42,7 +42,7 @@ Koristene oznake:
 
 #define Nt     500   // broj koraka
 #define Nw     500   // broj setaca
-#define Nb     210   // broj blokova
+#define Nb     200   // broj blokova
 #define NbSkip  10   // broj prvih blokova koje preskacemo
 #define alf    1.20   // parametar probne valne funkcije
 
@@ -68,7 +68,7 @@ int main(){
 		E[iw]=2./r1*(alf-1.)-alf*alf;
 	}
 	SbE=0.; SbE2=0.;
-	for(ib=1; ib<=Nb; ib++){ // blokovi
+	for(ib=1; ib<=Nb+NbSkip; ib++){ // blokovi
 		StE=0.;
 		NbEff = ib-NbSkip;
 		for(it=1; it<=Nt; it++){ // koraci
@@ -129,5 +129,5 @@ int main(){
 }
 
 double Psi (double r, double z){
-	return exp(-alf*r);
+	return r*exp(-alf*r*r);
 }
