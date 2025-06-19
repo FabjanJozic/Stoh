@@ -4,7 +4,7 @@
 #include <math.h>
 
 #define PI 3.14159265358979323846
-#define MAX_L 230
+#define MAX_L 360
 #define MAX_W 20001
 
 #include "ran1.c"  // Generator slucajnih brojeva
@@ -67,7 +67,7 @@ int main() {
     int Nk = 4, Nb_skip = 1500, Nb = 10000;
     double acceptance = 0.4;
     double dmax_init = 1.0;
-    int Ls[] = {4, 8, 16, 32, 48, 64, 80, 96, 128, 160, 192, 224};
+    int Ls[] = {4, 8, 16, 32, 48, 64, 80, 96, 128, 160, 192, 224, 288, 352};
     int num_L = sizeof(Ls) / sizeof(Ls[0]);
 
     long idum = -1208; // Seed za ran1
