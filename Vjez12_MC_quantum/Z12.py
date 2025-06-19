@@ -1,6 +1,6 @@
 import numpy as np
 
-seed = -208 #za random number generator
+seed = 208 #za random number generator
 
 Nk = 200
 Nw = 100
