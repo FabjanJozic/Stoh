@@ -1,8 +1,9 @@
 import numpy as np
 
 '''
-Kod za rjesavanje b) seminarskog zadatka. Racunanje vrijenosti ⟨θ^2⟩, gdje je θ kut spina cestice u xy-ravnini,
-te ln(N), gdje je N=L^2. Proucavanje ovisnosti ⟨θ^2⟩ o ln(N). Simulacija se održava na udjelu prihvacanja 40%.
+Kod za rjesavanje b) seminarskog zadatka. Racunanje vrijenosti ⟨θ^2⟩, gdje je θ kut izmedu spina cestice u 
+xy-ravnini i smjera magnetizacije M, te ln(N), gdje je N=L^2. Proucavanje ovisnosti ⟨θ^2⟩ o ln(N). Simulacija
+se održava na udjelu prihvacanja 40%.
 '''
 
 kT = 0.1 #fiksna temperatura za zadatak b)
