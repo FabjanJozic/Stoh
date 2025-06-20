@@ -1,4 +1,4 @@
-// sem_b.c
+// sem_b_with_ran1.c
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -73,7 +73,7 @@ int main() {
     long idum = -1208; // Seed za ran1
 
     FILE* fTheta2 = fopen("f_theta2_vs_L.dat", "w");
-    fprintf(fTheta2, "# L  N  <theta^2>  ln(N)\n");
+    fprintf(fTheta2, "# L  N  <theta^2>  sigma_theta2  ln(N)\n");
 
     for (int idx = 0; idx < num_L; idx++) {
         int L = Ls[idx];
@@ -92,7 +92,7 @@ int main() {
             w[j] = exp(-beta * (j / 1000.0));
 
         double E0 = E(Theta, L, J);
-        double accept = 0.0, sum_theta2 = 0.0;
+        double accept = 0.0, sum_theta2 = 0.0, sum_theta2_sq = 0.0;
 
         for (int ib = 1; ib <= Nb_skip + Nb; ib++) {
             for (int ik = 0; ik < Nk * N; ik++) {
@@ -121,7 +121,9 @@ int main() {
 
             if (ib > Nb_skip) {
                 double phiM = M_angle(Theta, L);
-                sum_theta2 += theta2(Theta, phiM, L);
+                double th2 = theta2(Theta, phiM, L);
+                sum_theta2 += th2;
+                sum_theta2_sq += th2 * th2;
             }
 
             if (ib % 100 == 0) {
@@ -132,8 +134,10 @@ int main() {
         }
 
         double mean_theta2 = sum_theta2 / Nb;
+        double mean_theta2_sq = sum_theta2_sq / Nb;
+        double sigma_theta2 = sqrt((mean_theta2_sq - mean_theta2 * mean_theta2) / Nb);
         double lnN = log((double) N);
-        fprintf(fTheta2, "%4d %6d %15.9f %12.7f\n", L, N, mean_theta2, lnN);
+        fprintf(fTheta2, "%4d %6d %15.9f %15.9f %12.7f\n", L, N, mean_theta2, sigma_theta2, lnN);
 
         free(w);
         free_matrix(Theta, L+2);
