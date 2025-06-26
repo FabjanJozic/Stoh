@@ -115,11 +115,11 @@ int main() {
                 double new_theta = fmod(old_theta + dtheta + 2*PI, 2 * PI);
 
                 double dE = 0.0;
-                int ni[4] = {pbc(i+1,L), pbc(i-1,L), i, i}; // uvazavanje rubnih uvjeta
+                int ni[4] = {pbc(i+1,L), pbc(i-1,L), i, i}; // prvi susjedi
                 int nj[4] = {j, j, pbc(j+1,L), pbc(j-1,L)};
 
                 for (int n = 0; n < 4; n++) {
-                    double old_diff = old_theta - Theta[ni[n]][nj[n]]; // 
+                    double old_diff = old_theta - Theta[ni[n]][nj[n]]; 
                     double new_diff = new_theta - Theta[ni[n]][nj[n]];
                     dE -= J * (cos(new_diff) - cos(old_diff));
                 }
