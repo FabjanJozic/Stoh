@@ -10,14 +10,15 @@
 #define T_quench 0.5 // quench temperatura
 #define J 1.0 // integral izmjene
 
-#define Nk 5 // broj koraka po cestici
-#define Nb_skip 4000 // broj blokova za ekvilibraciju
-#define Nb0 2500 // broj blokova prije quencha
-#define Nb 2500 // broj blokova nakon quencha
+#define Nk 4 // broj koraka po cestici
+#define Nb_skip0 1000 // broj blokova za ekvilibraciju pocetne kofiguracije
+#define Nb_skip 50 // broj blokova za ekvilibraciju nakon quencha
+#define Nb0 2000 // broj blokova prije quencha
+#define Nb 8000 // broj blokova nakon quencha
 #define Nsim 100 // broj uzastopnih simulacija
 #define acceptance 0.4 // udio prihvacanja 40%
 
-const int L = 32; // sirina sustava
+const int L = 64; // sirina sustava
 const int N = L * L; // broj cestica u sustavu
 
 // periodicni rubni uvjeti
@@ -55,16 +56,16 @@ void free_matrix(double **mat, int n) {
 }
 
 int main() { 
-    FILE *f_mean_vortices_all_sim = fopen("mean_vortices_all_sim_32x32.dat", "w"); // srednji broj vrtloga za svaku simulaciju
+    FILE *f_mean_vortices_all_sim = fopen("mean_vortices_all_sim_64x64.dat", "w"); // broj vrtloga i antivrtloga za svaku simulaciju
     
     fprintf(f_mean_vortices_all_sim, "# is - <vortices> - <antivortices> - N_vortices - N_antivortices\n");
 
-    long idum = -1208; // seed za ran1
+    long idum = -1212; // seed za ran1
 
     for (int is = 1; is <= Nsim; is++) { // petlja po simulacijama
-        FILE *f_energy = fopen("energy_32x32.dat", "w"); // energija u sustavu prije i poslije quencha
-        FILE *f_theta_map = fopen("theta_map_32x32.dat", "w"); // mapa spinova (kuteva u xy-ravnini)
-        FILE *f_vortices_all_per_sim = fopen("vortices_all_per_sim_32x32.dat", "w"); // pozicije vrtloga i antivrtloga prije i poslije quencha
+        FILE *f_energy = fopen("energy_64x64.dat", "w"); // energija u sustavu prije i poslije quencha
+        FILE *f_theta_map = fopen("theta_map_64x64.dat", "w"); // mapa spinova (kuteva u xy-ravnini)
+        FILE *f_vortices_all_per_sim = fopen("vortices_all_per_sim_64x64.dat", "w"); // pozicije vrtloga i antivrtloga poslije quencha
 
         fprintf(f_energy, "# ib - <E>b - <E> - sigma_E - T\n");
         fprintf(f_vortices_all_per_sim, "# i - j - type - ib\n");
@@ -92,12 +93,17 @@ int main() {
         double E0 = E(Theta, L); // pocetna energija sustava
 
         // Metropolisov algoritam
-        for (int ib = 1; ib <= Nb_skip + Nb0 + Nb_skip + Nb; ib++) {
-            if (ib == Nb_skip + Nb0 + 1) { // uvjet za quench
+        for (int ib = 1; ib <= Nb_skip0 + Nb0 + Nb_skip + Nb; ib++) {
+            if (ib == Nb_skip0 + Nb0 + 1) { // uvjet za quench
                 T = T_quench;
                 beta = 1.0 / T;
                 for (int j = 0; j < w_size; j++)
                     w[j] = exp(-beta * (j / 1000.0));
+
+                    // resetiranje akumuliranih vrijednosti poslije quencha
+                    sum_E = 0.0;
+                    sum_E2 = 0.0;
+                    Nb_eff = 0;
             }
 
             for (int ik = 0; ik < Nk * N; ik++) {
@@ -133,8 +139,8 @@ int main() {
                     dmax *= 0.95;
             }
             
-            // racunanje srednje vrijednosti energije i standardne devijacije 
-            if ((Nb_skip < ib && ib <= Nb_skip + Nb0) || (ib > Nb_skip + Nb0 + Nb_skip)) {
+            // racunanje srednje vrijednosti energije i standardne devijacije prije i poslije quencha
+            if ((Nb_skip0 < ib && ib <= Nb_skip0 + Nb0) || (ib > Nb_skip0 + Nb0 + Nb_skip)) {
                 double E_block = E(Theta, L) / N;
                 Nb_eff++;
                 sum_E += E_block;
@@ -142,8 +148,10 @@ int main() {
                 double E_mean = sum_E / Nb_eff;
                 double sigma_E = sqrt((sum_E2 / Nb_eff - E_mean * E_mean) / Nb_eff);
                 fprintf(f_energy, "%6d %14.8f %14.8f %14.8f %4.1f\n", ib, E_block, E_mean, sigma_E, T);
-            
-                // odredivanje vrtloga i antivrtloga
+            }
+
+            // odredivanje vrtloga i antivrtloga samo poslije quencha
+            if (ib > Nb_skip0 + Nb0 + Nb_skip) {
                 int vortices = 0, antivortices = 0;
                 for (int i = 1; i < L; i++) {
                     for (int j = 1; j < L; j++) {
@@ -166,7 +174,7 @@ int main() {
                 sum_antivortex += antivortices;
 
                 // zapis mape spinova (kuteva u xy-ravnini)
-                if (vortices != 0 || antivortices != 0) {
+                if (ib % 20 == 0 || (vortices != 0 || antivortices != 0)) {
                     fprintf(f_theta_map, "# ib %6d\n", ib);
                     for (int i = 1; i <= L; i++) {
                         for (int j = 1; j <= L; j++)
@@ -180,6 +188,13 @@ int main() {
         double mean_vortex = sum_vortex / Nb_eff;
         double mean_antivortex = sum_antivortex / Nb_eff;
         fprintf(f_mean_vortices_all_sim, "%4d %.5f %.5f %.0f %.0f\n", is, mean_vortex, mean_antivortex, sum_vortex, sum_antivortex);
+
+        fprintf(f_theta_map, "# final configuration\n");
+        for (int i = 1; i <= L; i++) {
+            for (int j = 1; j <= L; j++)
+                fprintf(f_theta_map, "%.6f ", Theta[i][j]);
+            fprintf(f_theta_map, "\n");
+        }
 
         free(w);
         free_matrix(Theta, L+2);
