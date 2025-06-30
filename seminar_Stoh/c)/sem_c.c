@@ -155,18 +155,24 @@ int main() {
                 int vortices = 0, antivortices = 0;
                 for (int i = 1; i < L; i++) {
                     for (int j = 1; j < L; j++) {
-                        double angles[5] = {Theta[i][j], Theta[i+1][j], Theta[i+1][j+1], Theta[i][j+1], Theta[i][j]}; // prvi susjedi spina (i,j)
+                        double a0 = Theta[i][j];       // dolje lijevo
+                        double a1 = Theta[i][j+1];     // dolje desno
+                        double a2 = Theta[i+1][j+1];   // gore desno
+                        double a3 = Theta[i+1][j];     // gore lijevo
+
                         double winding = 0.0;
-                        for (int k = 0; k < 4; k++) {
-                            double diff = angles[k+1] - angles[k];
-                            winding += atan2(sin(diff), cos(diff));
-                        }
-                        if (fabs(winding - 2*PI) < 0.5) { // pronalazak vrtloga
-                            vortices++;
+                        winding += atan2(sin(a1 - a0), cos(a1 - a0));
+                        winding += atan2(sin(a2 - a1), cos(a2 - a1));
+                        winding += atan2(sin(a3 - a2), cos(a3 - a2));
+                        winding += atan2(sin(a0 - a3), cos(a0 - a3));
+
+                        // detekcija vrtloga i antivrtloga
+                        if (fabs(winding - 2 * PI) < 0.1) {
                             fprintf(f_vortices_all_per_sim, "%3d %3d +1 %4d\n", i, j, ib);
-                        } else if (fabs(winding + 2*PI) < 0.5) { // pronalazak antivrtloga
-                            antivortices++;
+                            vortices++;
+                        } else if (fabs(winding + 2 * PI) < 0.1) {
                             fprintf(f_vortices_all_per_sim, "%3d %3d -1 %4d\n", i, j, ib);
+                            antivortices++;
                         }
                     }
                 }
