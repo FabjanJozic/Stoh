@@ -32,7 +32,7 @@ for Nk in range(1, Nbmax+1):
         Sf2b += (Sfk*Sfk)/(Nk*Nk)
     Smb = Sfb/Nb
     var = ((Sf2b/Nb)-Smb**2)/(Nb-1)
-    fstdev32.write(f"{Nk:<5d} {Smb:>13.9f} {np.sqrt(var):>12.9f}\n")
+    fstdev64.write(f"{Nk:<5d} {Smb:>13.9f} {np.sqrt(var):>12.9f}\n")
     
 fstdev32.close()
 fstdev64.close()

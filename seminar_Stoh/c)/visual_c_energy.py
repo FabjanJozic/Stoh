@@ -82,7 +82,3 @@ ax.yaxis.set_major_locator(tick.MultipleLocator(0.005))
 ax.grid(lw=0.2, linestyle=':')
 ax.legend(loc='upper right')
 plt.show()'''
-
-
-
-
