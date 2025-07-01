@@ -12,7 +12,7 @@
 #define Nb 8000 // broj blokova za evoluciju sustava na temperaturi T
 #define acceptance 0.4 // udio prihvacanja 40%
 
-const int L = 64; // sirina sustava
+const int L = 32; // sirina sustava
 const int N = L * L; // broj cestica u sustavu
 const double Tmin = 0.5;
 const double Tmax = 1.5;
@@ -60,11 +60,14 @@ int main() {
         for (int j = 0; j <= L+1; j++)
             Theta[i][j] = 0.0; // pocetni uvjeti za T=0.5
 
-    FILE *fout = fopen("temp_ene_Cv_vor_antivor_64x64.dat", "w");
-    FILE *f_energy = fopen("energy_64x64.dat", "w");
+    FILE *fout = fopen("temp_ene_Cv_vor_antivor_32x32.dat", "w");
+    FILE *f_energy = fopen("energy_32x32.dat", "w");
+    FILE *f_theta_map = fopen("theta_map_32x32.dat", "w");
+    FILE *f_vortex_coords = fopen("vortex_coords_32x32.dat", "w");
 
     fprintf(fout, "# T - <E> - Cv - N_vor - N_antivor - N_vor/N - N_antivor/N\n");
     fprintf(f_energy, "# ib - T - <E>b - <E> - sigma_E\n");
+    fprintf(f_vortex_coords, "# T - i - j - type\n");
 
     int ib_G = 1; // globalni indeks bloka
 
@@ -120,38 +123,75 @@ int main() {
                 else if (acc_ratio < acceptance) dmax *= 0.95;
             }
         
-        if (ib >= Nb_skip) {
-            Nb_eff = ib - Nb_skip + 1;
-            double E_block = E(Theta, L) / N;
-            sum_E += E_block;
-            sum_E2 += E_block * E_block;
-            double E_mean = sum_E / Nb_eff;
-            double sigma_E = sqrt((sum_E2 / Nb_eff - E_mean * E_mean) / Nb_eff);
-            if (ib % 10 == 0) { // za minimiziranje broja podataka
-                fprintf(f_energy, "%7d %4.2f %11.8f %11.8f %11.8f\n", ib_G, T, E_block, E_mean, sigma_E);
-            }
+            if (ib >= Nb_skip) {
+                Nb_eff = ib - Nb_skip + 1;
+                double E_block = E(Theta, L) / N;
+                sum_E += E_block;
+                sum_E2 += E_block * E_block;
+                double E_mean = sum_E / Nb_eff;
+                double sigma_E = sqrt((sum_E2 / Nb_eff - E_mean * E_mean) / Nb_eff);
+                if (ib % 10 == 0) { // za minimiziranje broja podataka
+                    fprintf(f_energy, "%7d %4.2f %11.8f %11.8f %11.8f\n", ib_G, T, E_block, E_mean, sigma_E);
+                }
 
-            // detektiranje i racunanje broja vrtloga i antivrtloga kao u c) zadatku
-            for (int i = 1; i < L; i++) {
-                for (int j = 1; j < L; j++) {
-                    double a0 = Theta[i][j];
-                    double a1 = Theta[i][j+1];
-                    double a2 = Theta[i+1][j+1];
-                    double a3 = Theta[i+1][j];
+                // detektiranje i racunanje broja vrtloga i antivrtloga kao u c) zadatku
+                for (int i = 1; i < L; i++) {
+                    for (int j = 1; j < L; j++) {
+                        double a0 = Theta[i][j];
+                        double a1 = Theta[i][j+1];
+                        double a2 = Theta[i+1][j+1];
+                        double a3 = Theta[i+1][j];
 
-                    double winding = 0.0;
-                    winding += atan2(sin(a1 - a0), cos(a1 - a0));
-                    winding += atan2(sin(a2 - a1), cos(a2 - a1));
-                    winding += atan2(sin(a3 - a2), cos(a3 - a2));
-                    winding += atan2(sin(a0 - a3), cos(a0 - a3));
+                        double winding = 0.0;
+                        winding += atan2(sin(a1 - a0), cos(a1 - a0));
+                        winding += atan2(sin(a2 - a1), cos(a2 - a1));
+                        winding += atan2(sin(a3 - a2), cos(a3 - a2));
+                        winding += atan2(sin(a0 - a3), cos(a0 - a3));
 
-                    if (fabs(winding - 2*PI) < 0.1)
-                        sum_vortex++;
-                    else if (fabs(winding + 2*PI) < 0.1)
-                        sum_antivortex++;
+                        if (fabs(winding - 2*PI) < 0.1)
+                            sum_vortex++;
+                        else if (fabs(winding + 2*PI) < 0.1)
+                            sum_antivortex++;
+                    }
                 }
             }
-        }
+
+            // zapisivanje koordinata vrtloga i mape spinova samo za konacnu konfiguraciju sustava za danu temperaturu
+            if (ib == Nb_skip + Nb) {
+                int vortices_T = 0, antivortices_T = 0;
+                for (int i = 1; i < L; i++) {
+                    for (int j = 1; j < L; j++) {
+                        double a0 = Theta[i][j];
+                        double a1 = Theta[i][j+1];
+                        double a2 = Theta[i+1][j+1];
+                        double a3 = Theta[i+1][j];
+
+                        double winding = 0.0;
+                        winding += atan2(sin(a1 - a0), cos(a1 - a0));
+                        winding += atan2(sin(a2 - a1), cos(a2 - a1));
+                        winding += atan2(sin(a3 - a2), cos(a3 - a2));
+                        winding += atan2(sin(a0 - a3), cos(a0 - a3));
+
+                        if (fabs(winding - 2*PI) < 0.1) {
+                            vortices_T++;
+                            fprintf(f_vortex_coords, "%.2f %d %d +1\n", T, i, j);
+                        }
+                        else if (fabs(winding + 2*PI) < 0.1) {
+                            antivortices_T++;
+                            fprintf(f_vortex_coords, "%.2f %d %d -1\n", T, i, j);
+                        }
+                    }
+                }
+
+                fprintf(f_theta_map, "# T = %.2f\n", T);
+                for (int i = 1; i <= L; i++) {
+                    for (int j = 1; j <= L; j++) {
+                        fprintf(f_theta_map, "%.6f ", Theta[i][j]);
+                    }
+                    fprintf(f_theta_map, "\n");
+                }
+                fprintf(f_theta_map, "\n");
+            }
         }
 
         double mean_E = sum_E / Nb_eff;
