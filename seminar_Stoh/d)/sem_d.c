@@ -85,6 +85,7 @@ int main() {
 
         double sum_E = 0.0, sum_E2 = 0.0;
         int sum_vortex = 0, sum_antivortex = 0;
+        int Nb_eff = 0;
 
         // Metropolisov algoritam
         for (int ib = 1; ib <= Nb_skip + Nb; ib++, ib_G++) {
@@ -120,7 +121,7 @@ int main() {
             }
         
         if (ib >= Nb_skip) {
-            int Nb_eff = ib - Nb_skip + 1;
+            Nb_eff = ib - Nb_skip + 1;
             double E_block = E(Theta, L) / N;
             sum_E += E_block;
             sum_E2 += E_block * E_block;
@@ -153,8 +154,8 @@ int main() {
         }
         }
 
-        double mean_E = sum_E / Nb;
-        double Cv = (sum_E2 / Nb - mean_E * mean_E) * N / (T * T); // racunanje specificnog toplinskog kapaciteta
+        double mean_E = sum_E / Nb_eff;
+        double Cv = (sum_E2 / Nb_eff - mean_E * mean_E) * N / (T * T); // racunanje specificnog toplinskog kapaciteta
         double Nvortex = (double)sum_vortex / N;
         double Nantivortex = (double)sum_antivortex / N;
 
