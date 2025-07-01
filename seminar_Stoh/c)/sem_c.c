@@ -150,15 +150,20 @@ int main() {
                 fprintf(f_energy, "%6d %14.8f %14.8f %14.8f %4.1f\n", ib, E_block, E_mean, sigma_E, T);
             }
 
-            // odredivanje vrtloga i antivrtloga samo poslije quencha
+            /*
+            Biljeze se vrtlozi i antivrtlozi u sustavu spinova. Racuna se pozicija vrtlog kao konfiguracija spinova
+            na polozaju jedinicnog kvadrata na nacin da ako spinovi prividno rotiraju u smjeru obrnuto od kazaljke
+            na satu (+2π) biljezi se polozaj vrtloga tocno na tom mjestu. Antivrtlozi se biljeze ako je uocena rotacija
+            u smjeru kazaljke na satu (-2π). Vrtlozi i antivrtlozi biljeze se samo nakon quencha i kratke ekvilibracije.
+            */
             if (ib > Nb_skip0 + Nb0 + Nb_skip) {
                 int vortices = 0, antivortices = 0;
                 for (int i = 1; i < L; i++) {
                     for (int j = 1; j < L; j++) {
-                        double a0 = Theta[i][j];       // dolje lijevo
-                        double a1 = Theta[i][j+1];     // dolje desno
-                        double a2 = Theta[i+1][j+1];   // gore desno
-                        double a3 = Theta[i+1][j];     // gore lijevo
+                        double a0 = Theta[i][j]; // dolje lijevo
+                        double a1 = Theta[i][j+1]; // dolje desno
+                        double a2 = Theta[i+1][j+1]; // gore desno
+                        double a3 = Theta[i+1][j]; // gore lijevo
 
                         double winding = 0.0;
                         winding += atan2(sin(a1 - a0), cos(a1 - a0));

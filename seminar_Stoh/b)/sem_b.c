@@ -140,7 +140,7 @@ int main() {
             }
 
             // adaptiranje dmax s obzirom na udio prihvacenih koraka
-            if (ib % 100 == 0) {
+            if (ib % 5 == 0) {
                 double accept_ib = accept / (Nk * N * ib);
                 if (accept_ib > acceptance) dmax *= 1.05;
                 else if (accept_ib < acceptance) dmax *= 0.95;
