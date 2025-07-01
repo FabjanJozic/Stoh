@@ -32,12 +32,8 @@ if current_config and current_ib is not None:
     theta_indices.append(current_ib)
 
 # ucitavanje informacija o vrtlozima i antivrtlozima
-vortex_data = np.genfromtxt(
-    'vortices_all_per_sim_32x32_Nbskip50.dat',
-    comments='#',
-    dtype=[('x', 'i4'), ('y', 'i4'), ('charge', 'i4'), ('ib', 'i4')],
-    delimiter=None
-)
+vortex_data = np.genfromtxt('vortices_all_per_sim_32x32_Nbskip50.dat', comments='#',
+    dtype=[('x', 'i4'), ('y', 'i4'), ('charge', 'i4'), ('ib', 'i4')], delimiter=None)
 
 # podesavanje mreze
 grid_size = 32
@@ -65,7 +61,7 @@ with writer.saving(fig, "spin_map_32x32.gif", dpi=120):
         for vortex in ib_vortices:
             x, y = vortex['x'] - 1, vortex['y'] - 1
             charge = vortex['charge']
-            symbol = '\u21BB' if charge == 1 else '\u21BA'
+            symbol = '\u21BA' if charge == 1 else '\u21BB'
             color = 'red' if charge == 1 else 'blue'
             ax.text(x, y, symbol, color=color, fontsize=18, ha='center', va='center', zorder=5)
 
