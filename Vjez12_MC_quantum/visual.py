@@ -28,3 +28,26 @@ ax.legend(loc='upper right')
 plt.show()'''
 
 # ravnotezno uzorkovanje
+fE = np.loadtxt('energy.dat', comments='#')
+
+ib, Eb, Ec = [], [], []
+for i in range(len(fE)):
+    ib.append(fE[i, 0])
+    Eb.append(fE[i, 1])
+    Ec.append(fE[i,2])
+    
+fig = plt.figure(figsize=(12,5), dpi=110)
+ax = fig.add_axes([0.10, 0.15, 0.85, 0.75])
+plt.rcParams.update({'font.size': 12}) #type: ignore
+ax.plot(ib, Eb, lw=1.0, color='lime', label=r'$\langle E_{b}\rangle$', zorder=0)
+ax.plot(ib, Ec, lw=1.5, color='darkgreen', label=r'$\langle E\rangle$', zorder=1)
+ax.set_xlim(0, 401)
+ax.set_ylim(1.1711, 1.1743)
+ax.set_xlabel('block')
+ax.set_ylabel('$E$ / eV')
+ax.xaxis.set_major_locator(tick.MultipleLocator(40))
+ax.yaxis.set_major_locator(tick.MultipleLocator(0.0003))
+ax.grid(lw=0.2, linestyle=':')
+ax.set_title('Evolucija energije osnovnog stanja za $\u03B1$=0.25')
+ax.legend(loc='upper right')
+plt.show()
