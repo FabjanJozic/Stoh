@@ -4,7 +4,7 @@
 
 #include "ran1.c"
 
-#define Nk 200 // broj koraka
+#define Nk 500 // broj koraka
 #define Nw 500 // broj setaca
 #define Nb 400 // broj blokova za akomulaciju bitnih velicina
 #define Nb_skip 100 // broj blokova za ekvilibraciju
@@ -24,15 +24,15 @@ double Psi(double x, double a) {
 
 int main() {
     // varijacijski parametar
-    double alpha[10];
-    for (int i = 0; i < 10; i++) alpha[i] = 0.1 * (i + 1);
+    double alpha[20];
+    for (int i = 0; i < 20; i++) alpha[i] = 0.05 * (i + 1);
 
     FILE *falpha = fopen("E_alpha.dat", "w");
     fprintf(falpha, "# alpha - <E> - sigma_E - dx_max - acceptance\n");
 
     long seed = -208;
 
-    for (int ia = 0; ia < 10; ia++) {
+    for (int ia = 0; ia < 20; ia++) {
         double X[Nw] = {0}; // polozaji setaca
         double Xp[Nw] = {0}; // probni polozaji setaca
         double E[Nw] = {0}; // energija setaca
@@ -92,11 +92,11 @@ int main() {
         double sigma_E = sqrt((sum_E2 / Nb_eff_final - mean_E * mean_E) / (Nb_eff_final - 1));
         double acceptance = accept / (Nw * Nk * (Nb + Nb_skip));
 
-        fprintf(falpha, "%5.2f %12.8f %12.8f %10.6f %10.6f\n", alpha[ia], mean_E, sigma_E, dx_max, acceptance);
+        fprintf(falpha, "%6.3f %12.8f %12.8f %10.6f %7.3f\n", alpha[ia], mean_E, sigma_E, dx_max, acceptance*100.0);
     }
 
     double alpha_A = pow((sqrt(2.0 / PI) * K * m / (3.0 * h_)), 2.0 / 3.0); // analiticka vrijednost varijacijskog parametra
-    fprintf(falpha, "\n# alpha(K=%.1f,m=%.1f) = %.4f\n", K, m, alpha_A);
+    fprintf(falpha, "\n# alpha(K=%.1f,m=%.1f) = %.5f\n", K, m, alpha_A);
 
     fclose(falpha);
     return 0;
