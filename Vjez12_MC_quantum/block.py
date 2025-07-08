@@ -1,4 +1,5 @@
 import numpy as np
+import matplotlib.pyplot as plt
 import warnings
 
 with warnings.catch_warnings():
@@ -26,11 +27,16 @@ for Nk in range(1, Nkmax+1):
 fstdev.close()
 
 fo = np.loadtxt('st_dev.dat')
-dev = []
+dev, ib = [], []
 
 for i in range(len(fo)):
+    ib.append(fo[i, 0])
     dev.append(fo[i, 2])
 
 print(r'<\sigma> = {}'.format(np.mean(dev)))
+
+plt.plot(ib, dev)
+plt.show()
+
 
 # 1.6991112781954888e-05
